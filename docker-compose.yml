@@ -1,0 +1,28 @@
+version: '3'
+
+volumes: 
+  data-base:
+
+services:
+  db: 
+    image: postgres:12
+    environment:
+      - 'POSTGRES_PASSWORD=password'
+    volumes:
+      - './data-base:/var/lib/postgresql/data'
+  
+  web:
+    platform: linux/arm64/v8
+    build: .
+    environment:
+      - 'DATABASE_PASSWORD=password'
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/myapp
+    ports: 
+      - "3000:3000"
+    depends_on: 
+      - db
+    links: 
+      - db
+
